@@ -3,9 +3,14 @@
 src/**
 .gitignore
 tsconfig.json
+vite.config.ts
+webpack.config.js
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/node_modules/**
 **/.eslintrc.json
 **/*.map
 **/*.ts
+.github/**
+pnpm-lock.yaml
+.npmrc

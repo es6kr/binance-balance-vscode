@@ -1,0 +1,115 @@
+name: Release VSCode Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build extension
+        run: pnpm run package
+
+      - name: Package extension
+        run: pnpm run package && vsce package --no-dependencies
+
+      - name: Get extension info
+        id: extension
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "filename=$NAME-$VERSION.vsix" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.extension.outputs.version }}
+          release_name: Release v${{ steps.extension.outputs.version }}
+          body: |
+            ## What's New
+
+            Release of Binance Balance VSCode Extension v${{ steps.extension.outputs.version }}
+
+            ### Installation
+            Download the `.vsix` file and install it in VSCode:
+            1. Open VSCode
+            2. Go to Extensions (Ctrl+Shift+X)
+            3. Click on the "..." menu
+            4. Select "Install from VSIX..."
+            5. Select the downloaded file
+
+            ### Features
+            - Real-time Binance account balance display in status bar
+            - WebSocket connection for live updates
+            - Multiple currency display options (USDT, BTC, ETH, BNB)
+            - Configurable refresh intervals
+
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ steps.extension.outputs.filename }}
+          asset_name: ${{ steps.extension.outputs.filename }}
+          asset_content_type: application/zip
+
+      - name: Publish to VS Code Marketplace
+        if: ${{ !github.event.inputs.version || github.event_name == 'push' }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          if [ -n "$VSCE_PAT" ]; then
+            vsce publish --no-dependencies --pat $VSCE_PAT
+            echo "✅ Published to VS Code Marketplace"
+          else
+            echo "⚠️ VSCE_PAT not set, skipping marketplace publish"
+          fi
+
+      - name: Publish to Open VSX Registry
+        if: ${{ !github.event.inputs.version || github.event_name == 'push' }}
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          if [ -n "$OVSX_PAT" ]; then
+            npx ovsx publish ${{ steps.extension.outputs.filename }} -p $OVSX_PAT
+            echo "✅ Published to Open VSX Registry"
+          else
+            echo "⚠️ OVSX_PAT not set, skipping Open VSX publish"
+          fi

@@ -36,14 +36,14 @@ If the "Binance Balance Monitor" output channel is not appearing in VS Code's Ou
    ```bash
    # Uninstall current version
    code --uninstall-extension binance-balance.binance-balance-vscode
-   
+
    # Recompile and package (in extension directory)
    npm install
    npm run compile
-   npx vsce package --out binance-balance-vscode-1.0.2.vsix
-   
+   npx vsce package --out binance-balance-vscode-1.0.0.vsix
+
    # Install updated version
-   code --install-extension binance-balance-vscode-1.0.2.vsix
+   code --install-extension binance-balance-vscode-1.0.0.vsix
    ```
 
 4. **Reload VS Code**
@@ -59,7 +59,7 @@ If the "Binance Balance Monitor" output channel is not appearing in VS Code's Ou
 - **v1.0.4**: Added webpack bundling to include dependencies (axios) in extension package
 - **v1.0.3**: Changed activationEvents to "*" for immediate activation
 - **v1.0.2**: Replaced node-fetch with axios for better VS Code compatibility
-- **v1.0.1**: Fixed TypeScript compilation issues  
+- **v1.0.1**: Fixed TypeScript compilation issues
 - **v1.0.0**: Initial release
 
 ### Dependencies Issue Solution
@@ -113,6 +113,60 @@ Click on the status bar item to manually refresh the balance.
 - VSCode 1.74.0 or higher
 - Binance account with API access
 - Internet connection
+
+## Development
+
+### Building
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build for development
+pnpm run compile
+
+# Build for production
+pnpm run package
+
+# Watch mode
+pnpm run watch
+```
+
+### Packaging
+
+```bash
+# Package extension
+pnpm run vscode:package
+
+# Publish to marketplace (requires VSCE_PAT token)
+pnpm run vscode:publish
+```
+
+### GitHub Actions
+
+This project includes automated release workflows:
+
+1. **Release Workflow** (`.github/workflows/release.yml`)
+   - Triggers on version tags (`v*`) or manual workflow dispatch
+   - Builds and packages the extension
+   - Creates GitHub releases with VSIX files
+   - Publishes to VS Code Marketplace and Open VSX Registry
+
+2. **Version Bump Workflow** (`.github/workflows/version-bump.yml`)
+   - Manual workflow to bump version (patch/minor/major)
+   - Creates git tags and commits
+   - Generates changelog PR
+
+#### Setting up releases:
+
+1. **Manual Release**:
+   - Go to Actions → "Version Bump"
+   - Select bump type (patch/minor/major)
+   - Run workflow
+
+2. **Secrets needed for marketplace publishing**:
+   - `VSCE_PAT`: Visual Studio Code marketplace token
+   - `OVSX_PAT`: Open VSX Registry token (optional)
 
 ## License
 
