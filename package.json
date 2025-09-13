@@ -1,0 +1,115 @@
+{
+  "name": "binance-balance-vscode",
+  "displayName": "Binance Balance Monitor",
+  "description": "VSCode extension to display real-time Binance account balance in status bar",
+  "version": "1.0.0",
+  "publisher": "binance-balance",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "binanceBalance.refresh",
+        "title": "Refresh Binance Balance",
+        "category": "Binance"
+      },
+      {
+        "command": "binanceBalance.configure",
+        "title": "Configure Binance API",
+        "category": "Binance"
+      },
+      {
+        "command": "binanceBalance.showBalances",
+        "title": "Show Detailed Balances",
+        "category": "Binance"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "binanceBalance.configure",
+          "when": "true"
+        },
+        {
+          "command": "binanceBalance.refresh",
+          "when": "true"
+        },
+        {
+          "command": "binanceBalance.showBalances",
+          "when": "true"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Binance Balance",
+      "properties": {
+        "binanceBalance.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Binance API Key"
+        },
+        "binanceBalance.apiSecret": {
+          "type": "string",
+          "default": "",
+          "description": "Binance API Secret"
+        },
+        "binanceBalance.refreshInterval": {
+          "type": "number",
+          "default": 10000,
+          "description": "Refresh interval in milliseconds (default: 10 seconds)"
+        },
+        "binanceBalance.displayCurrency": {
+          "type": "string",
+          "enum": [
+            "USDT",
+            "BTC",
+            "ETH",
+            "BNB"
+          ],
+          "default": "USDT",
+          "description": "Currency to display balance in"
+        },
+        "binanceBalance.showIcon": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show money icon (💰) in status bar"
+        },
+        "binanceBalance.silentRefreshInterval": {
+          "type": "number",
+          "default": 5000,
+          "description": "WebSocket silent refresh interval in milliseconds (default: 5 seconds)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out --sourceMap true"
+  },
+  "devDependencies": {
+    "@types/node": "^18.x",
+    "@types/node-fetch": "^2.6.4",
+    "@types/vscode": "^1.74.0",
+    "@types/webpack": "^5.28.5",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.3.0",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "@types/ws": "^8.18.1",
+    "axios": "^1.12.1",
+    "ws": "^8.18.3"
+  }
+}
