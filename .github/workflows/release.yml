@@ -35,11 +35,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install VSCE
+        run: npm install -g @vscode/vsce
+
       - name: Build extension
         run: pnpm run package
 
       - name: Package extension
-        run: pnpm run package && vsce package --no-dependencies
+        run: vsce package --no-dependencies
 
       - name: Get extension info
         id: extension
