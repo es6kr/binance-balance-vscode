@@ -2,7 +2,7 @@
   "name": "binance-balance-vscode",
   "displayName": "Binance Balance Monitor",
   "description": "VSCode extension to display real-time Binance account balance in status bar",
-  "version": "v0.0.2",
+  "version": "0.0.4",
   "publisher": "binance-balance",
   "packageManager": "pnpm@9.0.0",
   "repository": {
@@ -101,14 +101,14 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run package",
+    "vscode:prepublish": "npm run package",
     "compile": "vite build",
     "watch": "vite build --watch",
     "package": "vite build --mode production",
     "compile-tests": "tsc -p . --outDir out --sourceMap true",
     "dev": "vite build --watch --mode development",
-    "vscode:package": "pnpm run package && vsce package --no-dependencies",
-    "vscode:publish": "pnpm run package && vsce publish --no-dependencies",
+    "vscode:package": "npm run package && vsce package --no-dependencies",
+    "vscode:publish": "npm run package && vsce publish --no-dependencies",
     "prepare": "husky"
   },
   "devDependencies": {
