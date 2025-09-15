@@ -40,7 +40,7 @@ jobs:
         run: npm install -g @vscode/vsce
 
       - name: Build extension
-        run: pnpm run package
+        run: npm run package
 
       - name: Package extension
         run: vsce package --no-dependencies
@@ -86,13 +86,10 @@ jobs:
         run: npm install -g @vscode/vsce
 
       - name: Create Release
-        uses: actions/create-release@v1
-        id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ needs.build.outputs.version }}
-          release_name: Release v${{ needs.build.outputs.version }}
+          name: Release v${{ needs.build.outputs.version }}
           body: |
             ## What's New
 
@@ -112,18 +109,9 @@ jobs:
             - Multiple currency display options (USDT, BTC, ETH, BNB)
             - Configurable refresh intervals
 
+          files: ${{ needs.build.outputs.filename }}
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ needs.build.outputs.filename }}
-          asset_name: ${{ needs.build.outputs.filename }}
-          asset_content_type: application/zip
 
       - name: Publish to VS Code Marketplace
         if: ${{ !github.event.inputs.version || github.event_name == 'push' }}
