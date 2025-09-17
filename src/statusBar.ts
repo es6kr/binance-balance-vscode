@@ -6,19 +6,22 @@ export class BalanceStatusBar implements vscode.Disposable {
     private refreshTimer?: NodeJS.Timeout;
     private isUpdating = false;
     private hasInitialData = false;
+    private outputChannel: vscode.OutputChannel;
 
     constructor(private binanceApi: BinanceApiClient) {
+        this.outputChannel = vscode.window.createOutputChannel('Binance Balance Monitor');
+
         this.statusBarItem = vscode.window.createStatusBarItem(
             vscode.StatusBarAlignment.Right,
             100
         );
-        
+
         this.statusBarItem.command = 'binanceBalance.refresh';
         this.statusBarItem.tooltip = 'Click to refresh Binance balance';
         this.statusBarItem.show();
-        
+
         this.updateStatusBar('⚠️ Not configured');
-        
+
         // Set up silent update callback
         this.binanceApi.onBalanceUpdate((balance) => {
             this.updateBalanceDisplay(balance, true); // true = silent update
@@ -50,21 +53,21 @@ export class BalanceStatusBar implements vscode.Disposable {
                 this.updateStatusBar('🔄 Loading...');
                 this.statusBarItem.tooltip = 'Loading balance...';
             }
-            
+
             const estimatedBalance = await this.binanceApi.getTotalEstimatedBalance();
             this.updateBalanceDisplay(estimatedBalance, false); // false = not silent
-            
-            this.hasInitialData = true;
 
+            this.hasInitialData = true;
         } catch (error) {
+            this.outputChannel.appendLine(`[ERROR] Failed to update balance: ${error}`);
             console.error('Failed to update balance:', error);
             this.updateStatusBar('❌ Error');
-            
+
             let errorMessage = 'Unknown error';
             if (error instanceof Error) {
                 errorMessage = error.message;
             }
-            
+
             this.statusBarItem.tooltip = `Error: ${errorMessage}\\nClick to retry`;
             this.statusBarItem.command = 'binanceBalance.refresh';
         } finally {
@@ -76,7 +79,7 @@ export class BalanceStatusBar implements vscode.Disposable {
         if (symbol === 'USDT') {
             return `$${balance.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
             })}`;
         } else {
             const decimals = symbol === 'BTC' ? 6 : 4;
@@ -92,10 +95,10 @@ export class BalanceStatusBar implements vscode.Disposable {
         try {
             const config = vscode.workspace.getConfiguration('binanceBalance');
             const displayCurrency = config.get<string>('displayCurrency', 'USDT');
-            
+
             let balance: number;
             let symbol: string;
-            
+
             if (displayCurrency === 'USDT') {
                 balance = estimatedBalance.totalUSDT;
                 symbol = 'USDT';
@@ -123,13 +126,14 @@ export class BalanceStatusBar implements vscode.Disposable {
             const formattedBalance = this.formatBalance(balance, symbol);
             const displayText = showIcon ? `💰 ${formattedBalance}` : formattedBalance;
             this.updateStatusBar(displayText);
-            
+
             const lastUpdate = new Date().toLocaleTimeString();
             const spotFormatted = this.formatBalance(estimatedBalance.spotUSDT, 'USDT');
             const marginFormatted = this.formatBalance(estimatedBalance.marginUSDT, 'USDT');
-            
+
             const updateType = silent ? 'Live' : 'Manual';
-            this.statusBarItem.tooltip = `Total Estimated: ${formattedBalance}\\n` +
+            this.statusBarItem.tooltip =
+                `Total Estimated: ${formattedBalance}\\n` +
                 `Spot: ${spotFormatted}\\n` +
                 `Margin: ${marginFormatted}\\n` +
                 `Last updated: ${lastUpdate} (${updateType})\\n` +
@@ -137,6 +141,7 @@ export class BalanceStatusBar implements vscode.Disposable {
             this.statusBarItem.command = 'binanceBalance.refresh';
         } catch (error) {
             if (!silent) {
+                this.outputChannel.appendLine(`[ERROR] Failed to update balance display: ${error}`);
                 console.error('Failed to update balance display:', error);
             }
         }
@@ -161,5 +166,6 @@ export class BalanceStatusBar implements vscode.Disposable {
             clearTimeout(this.refreshTimer);
         }
         this.statusBarItem.dispose();
+        this.outputChannel.dispose();
     }
 }
