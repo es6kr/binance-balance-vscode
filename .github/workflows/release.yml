@@ -40,7 +40,7 @@ jobs:
         run: npm install -g @vscode/vsce
 
       - name: Build extension
-        run: npm run package
+        run: pnpm run package
 
       - name: Package extension
         run: vsce package --no-dependencies

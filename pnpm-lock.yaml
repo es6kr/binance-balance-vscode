@@ -19,8 +19,8 @@ importers:
         version: 8.18.3
     devDependencies:
       '@types/node':
-        specifier: ^18.x
-        version: 18.19.124
+        specifier: ^20.17.58
+        version: 20.19.19
       '@types/node-fetch':
         specifier: ^2.6.4
         version: 2.6.13
@@ -33,12 +33,15 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
+      prettier:
+        specifier: ^3.4.2
+        version: 3.6.2
       typescript:
         specifier: ^5.3.0
         version: 5.9.2
       vite:
         specifier: ^5.0.0
-        version: 5.4.20(@types/node@18.19.124)
+        version: 5.4.20(@types/node@20.19.19)
 
 packages:
 
@@ -335,8 +338,8 @@ packages:
   '@types/node-fetch@2.6.13':
     resolution: {integrity: sha512-QGpRVpzSaUs30JBSGPjOg4Uveu384erbHBoT1zeONvyCfwQxIkUshLAOqN/k9EjGviPRmWTTe6aH2qySWKTVSw==}
 
-  '@types/node@18.19.124':
-    resolution: {integrity: sha512-hY4YWZFLs3ku6D2Gqo3RchTd9VRCcrjqp/I0mmohYeUVA5Y8eCXKJEasHxLAJVZRJuQogfd1GiJ9lgogBgKeuQ==}
+  '@types/node@20.19.19':
+    resolution: {integrity: sha512-pb1Uqj5WJP7wrcbLU7Ru4QtA0+3kAXrkutGiD26wUKzSMgNNaPARTUDQmElUXp64kh3cWdou3Q0C7qwwxqSFmg==}
 
   '@types/vscode@1.104.0':
     resolution: {integrity: sha512-0KwoU2rZ2ecsTGFxo4K1+f+AErRsYW0fsp6A0zufzGuhyczc2IoKqYqcwXidKXmy2u8YB2GsYsOtiI9Izx3Tig==}
@@ -869,6 +872,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  prettier@3.6.2:
+    resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
+    engines: {node: '>=14'}
+    hasBin: true
+
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
@@ -990,8 +998,8 @@ packages:
   underscore@1.13.7:
     resolution: {integrity: sha512-GMXzWtsc57XAtguZgaQViUOzs0KTkk8ojr3/xAxXLITqf/3EMwxC0inyETfDFjH/Krbhuep0HNbbjI9i/q3F3g==}
 
-  undici-types@5.26.5:
-    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
   undici@7.16.0:
     resolution: {integrity: sha512-QEg3HPMll0o3t2ourKwOeUAZ159Kn9mx5pnzHRQO8+Wixmh88YdZRiIwat0iNzNNXn0yoEtXJqFpyW7eM8BV7g==}
@@ -1303,18 +1311,18 @@ snapshots:
 
   '@types/node-fetch@2.6.13':
     dependencies:
-      '@types/node': 18.19.124
+      '@types/node': 20.19.19
       form-data: 4.0.4
 
-  '@types/node@18.19.124':
+  '@types/node@20.19.19':
     dependencies:
-      undici-types: 5.26.5
+      undici-types: 6.21.0
 
   '@types/vscode@1.104.0': {}
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 18.19.124
+      '@types/node': 20.19.19
 
   '@typespec/ts-http-runtime@0.3.1':
     dependencies:
@@ -1924,6 +1932,8 @@ snapshots:
       tunnel-agent: 0.6.0
     optional: true
 
+  prettier@3.6.2: {}
+
   proxy-from-env@1.1.0: {}
 
   pump@3.0.3:
@@ -2086,7 +2096,7 @@ snapshots:
 
   underscore@1.13.7: {}
 
-  undici-types@5.26.5: {}
+  undici-types@6.21.0: {}
 
   undici@7.16.0: {}
 
@@ -2097,13 +2107,13 @@ snapshots:
 
   uuid@8.3.2: {}
 
-  vite@5.4.20(@types/node@18.19.124):
+  vite@5.4.20(@types/node@20.19.19):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.6
       rollup: 4.50.1
     optionalDependencies:
-      '@types/node': 18.19.124
+      '@types/node': 20.19.19
       fsevents: 2.3.3
 
   whatwg-encoding@3.1.1:
