@@ -18,10 +18,31 @@ export interface MarginBalanceInfo {
     netAsset: string;
 }
 
+export interface IsolatedMarginAsset {
+    symbol: string;
+    quoteAsset: {
+        asset: string;
+        free: string;
+        locked: string;
+        borrowed: string;
+        interest: string;
+        netAsset: string;
+    };
+    baseAsset: {
+        asset: string;
+        free: string;
+        locked: string;
+        borrowed: string;
+        interest: string;
+        netAsset: string;
+    };
+}
+
 export interface TotalEstimatedBalance {
     totalUSDT: number;
     spotUSDT: number;
     marginUSDT: number;
+    isolatedMarginUSDT: number;
 }
 
 export class BinanceApiClient {
@@ -49,12 +70,21 @@ export class BinanceApiClient {
 
     private setupPriceStream() {
         // Subscribe to price updates for major cryptocurrencies
-        const symbols = ['btcusdt', 'ethusdt', 'bnbusdt', 'adausdt', 'xrpusdt', 'solusdt', 'dotusdt', 'linkusdt'];
-        const streamName = symbols.map(s => `${s}@ticker`).join('/');
-        
+        const symbols = [
+            'btcusdt',
+            'ethusdt',
+            'bnbusdt',
+            'adausdt',
+            'xrpusdt',
+            'solusdt',
+            'dotusdt',
+            'linkusdt',
+        ];
+        const streamName = symbols.map((s) => `${s}@ticker`).join('/');
+
         try {
             this.ws = new WebSocket(`${this.wsBaseUrl}${streamName}`);
-            
+
             this.ws.on('open', () => {
                 console.log('Binance WebSocket connected');
             });
@@ -92,7 +122,7 @@ export class BinanceApiClient {
         // Get silent refresh interval from config
         const config = vscode.workspace.getConfiguration('binanceBalance');
         const silentRefreshInterval = config.get<number>('silentRefreshInterval', 5000);
-        
+
         // Only update if we have initial data and enough time has passed since last update
         if (!this.isInitialized || Date.now() - this.lastUpdateTime < silentRefreshInterval) {
             return;
@@ -121,7 +151,7 @@ export class BinanceApiClient {
         const timestamp = Date.now();
         const queryString = new URLSearchParams({
             ...params,
-            timestamp: timestamp.toString()
+            timestamp: timestamp.toString(),
         }).toString();
 
         const signature = this.createSignature(queryString);
@@ -131,8 +161,8 @@ export class BinanceApiClient {
 
         const response = await axios.get(url, {
             headers: {
-                'X-MBX-APIKEY': this.apiKey
-            }
+                'X-MBX-APIKEY': this.apiKey,
+            },
         });
 
         if (response.status !== 200) {
@@ -145,8 +175,9 @@ export class BinanceApiClient {
     async getAccountBalance(): Promise<BalanceInfo[]> {
         try {
             const data = await this.makeRequest('/api/v3/account');
-            return data.balances.filter((balance: BalanceInfo) => 
-                parseFloat(balance.free) > 0 || parseFloat(balance.locked) > 0
+            return data.balances.filter(
+                (balance: BalanceInfo) =>
+                    parseFloat(balance.free) > 0 || parseFloat(balance.locked) > 0
             );
         } catch (error) {
             console.error('Failed to fetch balance:', error);
@@ -157,12 +188,26 @@ export class BinanceApiClient {
     async getMarginAccountBalance(): Promise<MarginBalanceInfo[]> {
         try {
             const data = await this.makeRequest('/sapi/v1/margin/account');
-            return data.userAssets.filter((balance: MarginBalanceInfo) => 
-                parseFloat(balance.netAsset) !== 0
+            return data.userAssets.filter(
+                (balance: MarginBalanceInfo) => parseFloat(balance.netAsset) !== 0
             );
         } catch (error) {
             console.error('Failed to fetch margin balance:', error);
             return []; // Return empty array if margin account not available
+        }
+    }
+
+    async getIsolatedMarginAccountBalance(): Promise<IsolatedMarginAsset[]> {
+        try {
+            const data = await this.makeRequest('/sapi/v1/margin/isolated/account');
+            return data.assets.filter(
+                (asset: IsolatedMarginAsset) =>
+                    parseFloat(asset.baseAsset.netAsset) !== 0 ||
+                    parseFloat(asset.quoteAsset.netAsset) !== 0
+            );
+        } catch (error) {
+            console.error('Failed to fetch isolated margin balance:', error);
+            return []; // Return empty array if isolated margin account not available
         }
     }
 
@@ -173,18 +218,20 @@ export class BinanceApiClient {
                 return this.balanceCache;
             }
 
-            const [spotBalances, marginBalances] = await Promise.all([
+            const [spotBalances, marginBalances, isolatedMarginAssets] = await Promise.all([
                 this.getAccountBalance(),
-                this.getMarginAccountBalance()
+                this.getMarginAccountBalance(),
+                this.getIsolatedMarginAccountBalance(),
             ]);
 
             let spotUSDT = 0;
             let marginUSDT = 0;
+            let isolatedMarginUSDT = 0;
 
             // Calculate spot balance
             for (const balance of spotBalances) {
                 const totalAmount = parseFloat(balance.free) + parseFloat(balance.locked);
-                
+
                 if (balance.asset === 'USDT') {
                     spotUSDT += totalAmount;
                 } else if (totalAmount > 0) {
@@ -197,10 +244,10 @@ export class BinanceApiClient {
                 }
             }
 
-            // Calculate margin balance
+            // Calculate cross margin balance
             for (const balance of marginBalances) {
                 const netAmount = parseFloat(balance.netAsset);
-                
+
                 if (balance.asset === 'USDT') {
                     marginUSDT += netAmount;
                 } else if (netAmount !== 0) {
@@ -213,10 +260,56 @@ export class BinanceApiClient {
                 }
             }
 
+            // Calculate isolated margin balance
+            for (const asset of isolatedMarginAssets) {
+                // Base asset
+                const baseNetAmount = parseFloat(asset.baseAsset.netAsset);
+                if (baseNetAmount !== 0) {
+                    if (asset.baseAsset.asset === 'USDT') {
+                        isolatedMarginUSDT += baseNetAmount;
+                    } else {
+                        try {
+                            const price = await this.getPrice(
+                                `${asset.baseAsset.asset}USDT`,
+                                useCache
+                            );
+                            isolatedMarginUSDT += baseNetAmount * price;
+                        } catch (error) {
+                            console.warn(
+                                `Failed to get price for ${asset.baseAsset.asset}:`,
+                                error
+                            );
+                        }
+                    }
+                }
+
+                // Quote asset
+                const quoteNetAmount = parseFloat(asset.quoteAsset.netAsset);
+                if (quoteNetAmount !== 0) {
+                    if (asset.quoteAsset.asset === 'USDT') {
+                        isolatedMarginUSDT += quoteNetAmount;
+                    } else {
+                        try {
+                            const price = await this.getPrice(
+                                `${asset.quoteAsset.asset}USDT`,
+                                useCache
+                            );
+                            isolatedMarginUSDT += quoteNetAmount * price;
+                        } catch (error) {
+                            console.warn(
+                                `Failed to get price for ${asset.quoteAsset.asset}:`,
+                                error
+                            );
+                        }
+                    }
+                }
+            }
+
             const result = {
-                totalUSDT: spotUSDT + marginUSDT,
+                totalUSDT: spotUSDT + marginUSDT + isolatedMarginUSDT,
                 spotUSDT,
-                marginUSDT
+                marginUSDT,
+                isolatedMarginUSDT,
             };
 
             // Cache the result and mark as initialized
@@ -244,13 +337,15 @@ export class BinanceApiClient {
                 return this.priceCache.get(symbol.toUpperCase())!;
             }
 
-            const response = await axios.get(`${this.baseUrl}/api/v3/ticker/price?symbol=${symbol}`);
+            const response = await axios.get(
+                `${this.baseUrl}/api/v3/ticker/price?symbol=${symbol}`
+            );
             const data = response.data as { price: string };
             const price = parseFloat(data.price);
-            
+
             // Cache the price
             this.priceCache.set(symbol.toUpperCase(), price);
-            
+
             return price;
         } catch (error) {
             console.error(`Failed to get price for ${symbol}:`, error);
