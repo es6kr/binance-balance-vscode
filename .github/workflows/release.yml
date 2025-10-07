@@ -119,7 +119,7 @@ jobs:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
           if [ -n "$VSCE_PAT" ]; then
-            vsce publish --no-dependencies --pat $VSCE_PAT
+            vsce publish --packagePath ${{ needs.build.outputs.filename }} --pat $VSCE_PAT
             echo "✅ Published to VS Code Marketplace"
           else
             echo "⚠️ VSCE_PAT not set, skipping marketplace publish"
