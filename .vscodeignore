@@ -12,5 +12,6 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 .github/**
+out/*.vsix
 pnpm-lock.yaml
 .npmrc

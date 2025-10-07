@@ -43,7 +43,7 @@ jobs:
         run: pnpm run package
 
       - name: Package extension
-        run: vsce package --no-dependencies
+        run: vsce package --no-dependencies --out out
 
       - name: Get extension info
         id: extension
@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: vsix-package
-          path: "*.vsix"
+          path: "out/*.vsix"
           retention-days: 30
 
   release:
@@ -109,7 +109,7 @@ jobs:
             - Multiple currency display options (USDT, BTC, ETH, BNB)
             - Configurable refresh intervals
 
-          files: ${{ needs.build.outputs.filename }}
+          files: out/${{ needs.build.outputs.filename }}
           draft: false
           prerelease: false
 
@@ -119,7 +119,7 @@ jobs:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
           if [ -n "$VSCE_PAT" ]; then
-            vsce publish --packagePath ${{ needs.build.outputs.filename }} --pat $VSCE_PAT
+            vsce publish --packagePath out/${{ needs.build.outputs.filename }} --pat $VSCE_PAT
             echo "✅ Published to VS Code Marketplace"
           else
             echo "⚠️ VSCE_PAT not set, skipping marketplace publish"
@@ -131,7 +131,7 @@ jobs:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: |
           if [ -n "$OVSX_PAT" ]; then
-            npx ovsx publish ${{ needs.build.outputs.filename }} -p $OVSX_PAT
+            npx ovsx publish out/${{ needs.build.outputs.filename }} -p $OVSX_PAT
             echo "✅ Published to Open VSX Registry"
           else
             echo "⚠️ OVSX_PAT not set, skipping Open VSX publish"

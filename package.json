@@ -3,7 +3,7 @@
   "displayName": "Binance Balance Monitor",
   "description": "VSCode extension to display real-time Binance account balance in status bar",
   "version": "0.0.6",
-  "publisher": "binance-balance",
+  "publisher": "es6kr",
   "packageManager": "pnpm@9.0.0",
   "repository": {
     "type": "git",
@@ -107,7 +107,7 @@
     "package": "vite build --mode production",
     "compile-tests": "tsc -p . --outDir out --sourceMap true",
     "dev": "vite build --watch --mode development",
-    "vscode:package": "npm run package && vsce package --no-dependencies",
+    "vscode:package": "npm run package && vsce package --no-dependencies --out out",
     "vscode:publish": "npm run package && vsce publish --no-dependencies",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
