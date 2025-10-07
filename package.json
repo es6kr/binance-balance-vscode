@@ -2,17 +2,17 @@
   "name": "binance-balance-vscode",
   "displayName": "Binance Balance Monitor",
   "description": "VSCode extension to display real-time Binance account balance in status bar",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "publisher": "es6kr",
   "packageManager": "pnpm@9.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/binance-balance-vscode.git"
+    "url": "https://github.com/es6kr/binance-balance-vscode.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/binance-balance-vscode/issues"
+    "url": "https://github.com/es6kr/binance-balance-vscode/issues"
   },
-  "homepage": "https://github.com/your-username/binance-balance-vscode#readme",
+  "homepage": "https://github.com/es6kr/binance-balance-vscode#readme",
   "engines": {
     "vscode": "^1.74.0",
     "node": ">=20.0.0"
