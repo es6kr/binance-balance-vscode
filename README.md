@@ -55,13 +55,6 @@ If the "Binance Balance Monitor" output channel is not appearing in VS Code's Ou
    - Check Output panel → "Binance Balance Monitor" should appear
    - Look for "Extension activated!" message
 
-### Common Issues Fixed
-- **v1.0.4**: Added webpack bundling to include dependencies (axios) in extension package
-- **v1.0.3**: Changed activationEvents to "*" for immediate activation
-- **v1.0.2**: Replaced node-fetch with axios for better VS Code compatibility
-- **v1.0.1**: Fixed TypeScript compilation issues
-- **v1.0.0**: Initial release
-
 ### Dependencies Issue Solution
 VS Code extensions require dependencies to be bundled. The extension now uses webpack to bundle all dependencies including axios into a single file.
 

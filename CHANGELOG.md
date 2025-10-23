@@ -5,9 +5,7 @@ All notable changes to the "Binance Balance Monitor" extension will be documente
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-## [1.0.0] - 2024-09-14
+## [0.0.1] - 2024-09-14
 
 ### Added
 - Real-time Binance account balance display in VSCode status bar
