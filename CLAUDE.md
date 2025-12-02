@@ -6,9 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 VSCode extension that displays real-time Binance account balance in the status bar, supporting spot, cross margin, and isolated margin accounts.
 
-## Build and Development Commands
+## Documentation
 
-### Development
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Complete development guide (building, testing, publishing)
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed component architecture and data flow
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+
+## Quick Reference
+
+### Build Commands
 
 ```bash
 # Install dependencies (uses pnpm via corepack)
@@ -16,127 +22,56 @@ pnpm install
 
 # Development mode with watch
 pnpm run dev
-# or
-pnpm run watch
 
 # Compile for development
 pnpm run compile
-```
 
-### Testing the Extension
-
-```bash
-# Package the extension locally
-pnpm run vscode:package
-
-# Install the packaged extension
-code --install-extension binance-balance-vscode-0.0.5.vsix
-
-# Uninstall (useful for testing fresh installs)
-code --uninstall-extension binance-balance.binance-balance-vscode
-```
-
-### Release
-
-```bash
 # Build for production
 pnpm run package
 
-# Package and publish (requires VSCE_PAT token)
-pnpm run vscode:publish
+# Package the extension locally
+pnpm run vscode:package
 ```
 
-## Architecture
+### Code Style Rules
 
-### Core Components
+Follow CONTRIBUTING.md guidelines:
 
-**Extension Lifecycle** (`src/extension.ts`)
-
-- Entry point with `activate()` and `deactivate()` functions
-- Registers three commands: `binanceBalance.refresh`, `binanceBalance.configure`, `binanceBalance.showBalances`
-- Creates and manages `BinanceApiClient` and `BalanceStatusBar` instances
-- Includes detailed logging to Output channel for debugging
-
-**API Client** (`src/binanceApi.ts`)
-
-- `BinanceApiClient` class handles all Binance REST API and WebSocket interactions
-- Supports three account types: Spot (`/api/v3/account`), Cross Margin (`/sapi/v1/margin/account`), Isolated Margin (`/sapi/v1/margin/isolated/account`)
-- WebSocket connection (`wss://stream.binance.com:9443/ws/`) for real-time price updates
-- Price caching mechanism to minimize API calls
-- Silent background updates using cached prices when WebSocket receives new data
-- HMAC-SHA256 signature generation for authenticated requests
-
-**Status Bar** (`src/statusBar.ts`)
-
-- `BalanceStatusBar` class manages VSCode status bar item
-- Displays total estimated balance in USDT, BTC, ETH, or BNB
-- Shows breakdown of Spot, Cross Margin, and Isolated Margin in tooltip
-- Distinguishes between manual refreshes and silent WebSocket updates
-- Configurable refresh intervals and display options
-
-### Data Flow
-
-1. **Initial Load**: Extension activates → StatusBar starts → API client fetches all account balances → Total estimated balance calculated → Status bar updated
-2. **WebSocket Updates**: Price ticker arrives → Price cache updated → Silent balance recalculation (using cache) → Status bar updated quietly
-3. **Manual Refresh**: User clicks status bar → Full API fetch (bypasses cache) → Balance recalculated → Status bar updated
-
-### Configuration
-
-Settings are stored in VSCode workspace configuration (`binanceBalance.*`):
-
-- `apiKey`, `apiSecret`: Binance API credentials (read-only permissions required)
-- `refreshInterval`: Manual refresh interval in ms (default: 10000)
-- `silentRefreshInterval`: Background update throttle in ms (default: 5000)
-- `displayCurrency`: Display currency (USDT/BTC/ETH/BNB)
-- `showIcon`: Whether to show 💰 emoji
-
-## Build System
-
-Uses **Vite** for bundling (not webpack):
-
-- `vite.config.ts` configures library mode with CommonJS output
-- Bundles dependencies (axios, ws) into single `out/extension.js`
-- Externalizes VSCode API and Node.js built-ins
-- Source maps enabled for debugging
-
-## Code Style
-
-Follows CONTRIBUTING.md guidelines:
-
-- **4 spaces** for TypeScript indentation
+- **4 spaces** for TypeScript indentation (not 2 spaces, not tabs)
 - **English JSDoc** comments required for all public APIs
 - Use `pnpm run format` before committing (Prettier configuration in `.prettierrc`)
 - Git hooks via Husky ensure formatting on commit
 
-## CI/CD
+### Important Development Notes
 
-GitHub Actions workflows:
+1. **Build System**: Uses **Vite** (not webpack) - see `vite.config.ts`
+2. **Dependencies**: axios and ws are bundled into `out/extension.js`
+3. **API Integration**: All Binance API calls use HMAC-SHA256 signatures
+4. **WebSocket**: Automatic reconnection with 5s delay on disconnect
 
-- **release.yml**: Triggers on `v*` tags, builds extension, creates GitHub release, publishes to VS Code Marketplace and Open VSX Registry
-- **version-bump.yml**: Manual workflow to bump version and create tags
-- **build.yml**: CI build validation
+### Common Task Guidelines
 
-Required secrets for publishing:
+When modifying code:
+- Check [ARCHITECTURE.md](ARCHITECTURE.md) first to understand component relationships
+- Maintain the existing pattern of logging to Output channel for debugging
+- Keep price caching logic intact to minimize API calls
+- Preserve WebSocket reconnection behavior
 
-- `VSCE_PAT`: Visual Studio Marketplace token
-- `OVSX_PAT`: Open VSX Registry token (optional)
+When adding features:
+- Follow the command registration pattern in `src/extension.ts`
+- Use the existing `BinanceApiClient` methods rather than direct API calls
+- Update status bar through `BalanceStatusBar` class methods
+- Add new settings to `package.json` configuration schema
 
-## Common Issues
+### Testing
 
-### Extension Not Loading
+```bash
+# Package and install locally
+pnpm run vscode:package
+code --install-extension binance-balance-vscode-0.0.5.vsix
 
-- Check Output panel → "Binance Balance Monitor" for activation logs
-- Extension activates on `onStartupFinished` event
-- Dependencies are bundled, no external installs required in VSCode
+# Uninstall
+code --uninstall-extension binance-balance.binance-balance-vscode
+```
 
-### API Errors
-
-- Ensure API key has "Enable Reading" permission only
-- Check API credentials in VSCode settings (`binanceBalance.apiKey`, `binanceBalance.apiSecret`)
-- View detailed error logs in Output panel
-
-### WebSocket Connection
-
-- WebSocket automatically reconnects on disconnect (5s delay)
-- Subscribes to major crypto tickers: BTC, ETH, BNB, ADA, XRP, SOL, DOT, LINK
-- Price cache persists across reconnections
+Check Output panel → "Binance Balance Monitor" for logs.

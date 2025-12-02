@@ -109,57 +109,17 @@ Click on the status bar item to manually refresh the balance.
 
 ## Development
 
-### Building
+Want to contribute or build the extension yourself? Check out our development guides:
 
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** - Building, testing, publishing, and CI/CD
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and components
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+
+Quick start:
 ```bash
-# Install dependencies
 pnpm install
-
-# Build for development
-pnpm run compile
-
-# Build for production
-pnpm run package
-
-# Watch mode
-pnpm run watch
+pnpm run dev
 ```
-
-### Packaging
-
-```bash
-# Package extension
-pnpm run vscode:package
-
-# Publish to marketplace (requires VSCE_PAT token)
-pnpm run vscode:publish
-```
-
-### GitHub Actions
-
-This project includes automated release workflows:
-
-1. **Release Workflow** (`.github/workflows/release.yml`)
-   - Triggers on version tags (`v*`) or manual workflow dispatch
-   - Builds and packages the extension
-   - Creates GitHub releases with VSIX files
-   - Publishes to VS Code Marketplace and Open VSX Registry
-
-2. **Version Bump Workflow** (`.github/workflows/version-bump.yml`)
-   - Manual workflow to bump version (patch/minor/major)
-   - Creates git tags and commits
-   - Generates changelog PR
-
-#### Setting up releases:
-
-1. **Manual Release**:
-   - Go to Actions → "Version Bump"
-   - Select bump type (patch/minor/major)
-   - Run workflow
-
-2. **Secrets needed for marketplace publishing**:
-   - `VSCE_PAT`: Visual Studio Code marketplace token
-   - `OVSX_PAT`: Open VSX Registry token (optional)
 
 ## License
 
