@@ -18,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
         binanceApi = new BinanceApiClient();
         outputChannel.appendLine('BinanceApiClient created successfully');
 
-        statusBar = new BalanceStatusBar(binanceApi);
+        statusBar = new BalanceStatusBar(binanceApi, outputChannel);
         outputChannel.appendLine('BalanceStatusBar created successfully');
     } catch (error) {
         outputChannel.appendLine(`Error during initialization: ${error}`);
@@ -73,11 +73,6 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     outputChannel.appendLine('=== Extension activation completed ===');
-
-    // Show a notification that the extension has started
-    vscode.window.showInformationMessage(
-        'Binance Balance Monitor activated! Check Output panel for logs.'
-    );
 
     // Show the output channel
     outputChannel.show(true);

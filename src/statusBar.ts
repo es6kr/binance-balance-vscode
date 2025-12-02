@@ -8,8 +8,11 @@ export class BalanceStatusBar implements vscode.Disposable {
     private hasInitialData = false;
     private outputChannel: vscode.OutputChannel;
 
-    constructor(private binanceApi: BinanceApiClient) {
-        this.outputChannel = vscode.window.createOutputChannel('Binance Balance Monitor');
+    constructor(
+        private binanceApi: BinanceApiClient,
+        outputChannel: vscode.OutputChannel
+    ) {
+        this.outputChannel = outputChannel;
 
         this.statusBarItem = vscode.window.createStatusBarItem(
             vscode.StatusBarAlignment.Right,
@@ -166,6 +169,5 @@ export class BalanceStatusBar implements vscode.Disposable {
             clearTimeout(this.refreshTimer);
         }
         this.statusBarItem.dispose();
-        this.outputChannel.dispose();
     }
 }
