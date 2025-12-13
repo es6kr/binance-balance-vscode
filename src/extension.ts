@@ -74,6 +74,14 @@ export function activate(context: vscode.ExtensionContext) {
 
     outputChannel.appendLine('=== Extension activation completed ===');
 
+    // Show activation notification if enabled
+    const config = vscode.workspace.getConfiguration('binanceBalance');
+    if (config.get<boolean>('showActivationMessage', false)) {
+        vscode.window.showInformationMessage(
+            'Binance Balance Monitor activated! Check Output panel for logs.'
+        );
+    }
+
     // Show the output channel
     outputChannel.show(true);
 }
