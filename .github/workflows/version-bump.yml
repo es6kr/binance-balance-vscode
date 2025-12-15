@@ -65,8 +65,8 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "docs: update changelog for v${{ steps.version.outputs.new_version }}"
-          title: "📝 Update changelog for v${{ steps.version.outputs.new_version }}"
+          commit-message: 'docs: update changelog for v${{ steps.version.outputs.new_version }}'
+          title: '📝 Update changelog for v${{ steps.version.outputs.new_version }}'
           body: |
             ## Changelog Update
 

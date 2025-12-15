@@ -52,12 +52,14 @@ Follow CONTRIBUTING.md guidelines:
 ### Common Task Guidelines
 
 When modifying code:
+
 - Check [ARCHITECTURE.md](ARCHITECTURE.md) first to understand component relationships
 - Maintain the existing pattern of logging to Output channel for debugging
 - Keep price caching logic intact to minimize API calls
 - Preserve WebSocket reconnection behavior
 
 When adding features:
+
 - Follow the command registration pattern in `src/extension.ts`
 - Use the existing `BinanceApiClient` methods rather than direct API calls
 - Update status bar through `BalanceStatusBar` class methods

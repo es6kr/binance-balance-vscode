@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] - 2024-09-14
 
 ### Added
+
 - Real-time Binance account balance display in VSCode status bar
 - WebSocket connection for live balance updates
 - Multiple currency display options (USDT, BTC, ETH, BNB)
@@ -17,11 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Secure API key configuration through VSCode settings
 
 ### Technical
+
 - Built with TypeScript and Vite
 - Uses pnpm for package management
 - WebSocket integration for real-time updates
 - Axios for REST API communication
 
 ### Security
+
 - API keys stored securely in VSCode configuration
 - No credentials logged or exposed

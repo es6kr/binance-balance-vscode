@@ -216,11 +216,11 @@ Configure in GitHub repository settings:
 ### Adding a New Command
 
 1. Register command in [src/extension.ts](src/extension.ts):
+
    ```typescript
-   const disposable = vscode.commands.registerCommand(
-       'binanceBalance.myCommand',
-       async () => { /* implementation */ }
-   );
+   const disposable = vscode.commands.registerCommand('binanceBalance.myCommand', async () => {
+     /* implementation */
+   });
    context.subscriptions.push(disposable);
    ```
 
@@ -239,6 +239,7 @@ Configure in GitHub repository settings:
 ### Adding a New Setting
 
 1. Add to [package.json](package.json) configuration:
+
    ```json
    "configuration": {
        "properties": {
@@ -260,6 +261,7 @@ Configure in GitHub repository settings:
 ### Modifying API Client
 
 See [src/binanceApi.ts](src/binanceApi.ts):
+
 - All API calls use HMAC-SHA256 signatures
 - Price caching reduces API calls
 - WebSocket auto-reconnects on disconnect
@@ -267,6 +269,7 @@ See [src/binanceApi.ts](src/binanceApi.ts):
 ### Updating Status Bar
 
 See [src/statusBar.ts](src/statusBar.ts):
+
 - Update via `updateBalance()` method
 - Tooltip shows detailed breakdown
 - Configurable display currency

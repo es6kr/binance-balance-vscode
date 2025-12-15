@@ -5,17 +5,20 @@
 This project uses `.editorconfig` and `.prettierrc` for consistent code formatting.
 
 ### EditorConfig Settings
+
 - **Indent size**: 4 spaces for TypeScript files, 2 spaces for others
 - **End of line**: LF (Unix-style)
 - **Insert final newline**: Yes
 - **Trim trailing whitespace**: Yes
 
 ### Prettier Settings
+
 - **Print width**: 100 characters
 - **Quotes**: Single quotes
 - **Trailing commas**: ES5 style
 
 **Before committing**, ensure your code is formatted:
+
 ```bash
 pnpm run format
 ```
@@ -27,6 +30,7 @@ pnpm run format
 All code comments should follow these principles:
 
 #### 1. Use JSDoc Format
+
 - **Always use JSDoc** for functions, classes, interfaces, and complex logic
 - English is the **required language** for all JSDoc comments
 - JSDoc enables better IDE support, auto-completion, and type hints
@@ -34,6 +38,7 @@ All code comments should follow these principles:
 #### 2. Comment Types Priority
 
 **High Priority (Required)**
+
 ```typescript
 /**
  * Calculate total wallet balance across all account types.
@@ -49,6 +54,7 @@ async getTotalEstimatedBalance(useCache = false): Promise<TotalEstimatedBalance>
 ```
 
 **Medium Priority (Recommended)**
+
 ```typescript
 export interface TotalEstimatedBalance {
   /** Total balance across all account types in USDT */
@@ -63,6 +69,7 @@ export interface TotalEstimatedBalance {
 ```
 
 **Low Priority (Optional)**
+
 ```typescript
 // Only add inline comments for complex business logic
 if (baseNetAmount !== 0) {
@@ -79,6 +86,7 @@ if (baseNetAmount !== 0) {
 #### 3. When to Write Comments
 
 **DO Comment:**
+
 - Public API functions and methods
 - Complex business logic that isn't immediately obvious
 - Type definitions and interfaces
@@ -86,6 +94,7 @@ if (baseNetAmount !== 0) {
 - Error conditions and exceptions
 
 **DON'T Comment:**
+
 - Self-explanatory code
 - Obvious variable names
 - Simple getters/setters
@@ -93,7 +102,7 @@ if (baseNetAmount !== 0) {
 
 #### 4. JSDoc Tags Reference
 
-```typescript
+````typescript
 /**
  * Brief description of what the function does.
  * More detailed explanation if needed (optional).
@@ -108,11 +117,12 @@ if (baseNetAmount !== 0) {
  * console.log(balance.totalUSDT);
  * ```
  */
-```
+````
 
 #### 5. Good vs Bad Examples
 
 **✅ Good**
+
 ```typescript
 /**
  * Fetch isolated margin account balance from Binance API.
@@ -136,6 +146,7 @@ async getIsolatedMarginAccountBalance(): Promise<IsolatedMarginAsset[]> {
 ```
 
 **❌ Bad**
+
 ```typescript
 // 격리 마진 계좌 잔액을 가져옴
 async getIsolatedMarginAccountBalance(): Promise<IsolatedMarginAsset[]> {
@@ -149,6 +160,7 @@ async getIsolatedMarginAccountBalance(): Promise<IsolatedMarginAsset[]> {
 ```
 
 **Problems with the bad example:**
+
 - Korean comments (not searchable/readable for international developers)
 - No JSDoc format (no IDE support)
 - Missing error handling documentation
@@ -165,16 +177,19 @@ async getIsolatedMarginAccountBalance(): Promise<IsolatedMarginAsset[]> {
 ## TypeScript Best Practices
 
 ### Type Safety
+
 - Use explicit types for function parameters and return values
 - Avoid `any` type; use `unknown` when type is truly unknown
 - Define interfaces for complex data structures
 
 ### Error Handling
+
 - Always handle errors in async functions
 - Log errors with meaningful context
 - Return empty arrays/objects as fallback when appropriate
 
 ### Code Organization
+
 - One class/interface per file when possible
 - Group related functionality together
 - Keep functions focused and single-purpose
@@ -182,6 +197,7 @@ async getIsolatedMarginAccountBalance(): Promise<IsolatedMarginAsset[]> {
 ## Git Commit Messages
 
 Follow conventional commit format:
+
 ```
 feat: Add isolated margin balance calculation
 fix: Correct price conversion for BTC to USDT

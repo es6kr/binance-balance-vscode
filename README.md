@@ -24,6 +24,7 @@ VSCode extension to display real-time Binance account balance in the status bar.
 If the "Binance Balance Monitor" output channel is not appearing in VS Code's Output panel:
 
 1. **Check Extension Installation**
+
    ```bash
    code --list-extensions | grep binance
    ```
@@ -33,6 +34,7 @@ If the "Binance Balance Monitor" output channel is not appearing in VS Code's Ou
    - **Fixed in v1.0.2**: Replaced with `axios` for better compatibility
 
 3. **Reinstallation Steps**
+
    ```bash
    # Uninstall current version
    code --uninstall-extension binance-balance.binance-balance-vscode
@@ -56,6 +58,7 @@ If the "Binance Balance Monitor" output channel is not appearing in VS Code's Ou
    - Look for "Extension activated!" message
 
 ### Dependencies Issue Solution
+
 VS Code extensions require dependencies to be bundled. The extension now uses webpack to bundle all dependencies including axios into a single file.
 
 ## Setup
@@ -116,6 +119,7 @@ Want to contribute or build the extension yourself? Check out our development gu
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
 
 Quick start:
+
 ```bash
 pnpm install
 pnpm run dev

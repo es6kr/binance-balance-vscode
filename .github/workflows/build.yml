@@ -2,9 +2,9 @@ name: Build VSCode Extension
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -38,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: vsix-package
-          path: "*.vsix"
+          path: '*.vsix'
           retention-days: 30
